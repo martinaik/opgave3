@@ -1,0 +1,24 @@
+@Metadata.layer: #CUSTOMER
+
+@UI.headerInfo: {
+  typeName: 'Warehouse',
+  typeNamePlural: 'Warehouses',
+  title: {
+    type: #STANDARD,
+    value: 'WarehouseName'
+  },
+  description: {
+    value: 'City'
+  }
+}
+
+annotate view ZVH_SPAC109_WH with
+{
+  @UI.lineItem: [{ position: 10, label: 'Warehouse' }]
+  @UI.selectionField: [{ position: 10 }]
+  WarehouseName;
+
+  @UI.lineItem: [{ position: 20, label: 'City' }]
+  @UI.selectionField: [{ position: 20 }]
+  City;
+}

@@ -1,0 +1,17 @@
+@Metadata.layer: #CUSTOMER
+
+@UI.headerInfo: {
+  typeName: 'Product',
+  typeNamePlural: 'Products',
+  title: {
+    type: #STANDARD,
+    value: 'ProductName'
+  }
+}
+
+annotate view ZVH_SPAC109_PRODUCT with
+{
+  @UI.lineItem: [{ position: 10, label: 'Product Name' }]
+  @UI.selectionField: [{ position: 10 }]
+  ProductName;
+}

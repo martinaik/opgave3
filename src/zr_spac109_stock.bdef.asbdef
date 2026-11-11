@@ -1,0 +1,46 @@
+managed implementation in class zbp_r_spac109_stock unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZR_SPAC109_STOCK alias Stock
+persistent table zspac109_stock
+draft table zdspac109_stock
+lock master total etag LastChangedAt
+authorization master ( instance )
+{
+  create ( authorization : global );
+  update;
+  delete;
+
+  field ( readonly : update ) WarehouseId, ProductId;
+  field ( readonly ) ProductName, ProductDescription, ProductCategory,
+  WarehouseName, WarehouseAddress, WarehouseCity, PostalCode;
+  field ( mandatory ) Amount;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+
+  validation validateUniqueStock on save{ create; }
+  validation validateNonNegativeAmount on save { create; field Amount; }
+  validation validateProduct   on save { create; update; field ProductId; }
+  validation validateWarehouse on save { create; update; field WarehouseId; }
+
+  draft determine action Prepare
+  {
+    validation validateUniqueStock;
+    validation validateNonNegativeAmount;
+    validation validateProduct;
+    validation validateWarehouse;
+  }
+
+  mapping for zspac109_stock
+  {
+    WarehouseId = warehouse_id;
+    ProductId   = product_id;
+    Amount      = amount;
+    LastChangedAt = last_changed_at;
+  }
+
+}

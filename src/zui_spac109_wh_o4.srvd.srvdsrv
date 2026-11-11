@@ -1,0 +1,4 @@
+@EndUserText.label: 'Warehouse service definition'
+define service ZUI_SPAC109_WH_O4 {
+  expose ZC_SPAC109_WH as Warehouses;
+}

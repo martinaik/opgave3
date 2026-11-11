@@ -1,0 +1,44 @@
+managed implementation in class zbp_r_spac109_wh unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZR_SPAC109_WH alias Warehouse
+persistent table zspac109_wh
+draft table zdspac109_wh
+lock master total etag LastChangedAt
+early numbering
+authorization master ( instance )
+{
+  create ( authorization : global );
+  update;
+  delete ( precheck );
+
+  field ( readonly ) WarehouseId;
+  field ( mandatory ) WarehouseName, Address, City, PostalCode;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+
+  validation validateUniqueName on save { create; update; field WarehouseName; }
+  validation validateMandatory on save { create; update; field WarehouseName, Address, City, PostalCode; }
+  validation validatePostalCode on save { create; update; field PostalCode; }
+
+  draft determine action Prepare
+  {
+    validation validateUniqueName;
+    validation validateMandatory;
+    validation validatePostalCode;
+  }
+
+  mapping for zspac109_wh
+  {
+    WarehouseId   = warehouse_id;
+    WarehouseName = warehouse_name;
+    Address       = address;
+    City          = city;
+    PostalCode    = postal_code;
+    LastChangedAt = last_changed_at;
+  }
+}

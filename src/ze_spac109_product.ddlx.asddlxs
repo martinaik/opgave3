@@ -1,0 +1,33 @@
+@Metadata.layer: #CUSTOMER
+@UI.headerInfo: {
+  typeName: 'Product',
+  typeNamePlural: 'Products',
+  title: { type: #STANDARD, value: 'ProductName' }
+}
+annotate view ZC_SPAC109_PRODUCT with
+{
+  @UI.facet: [{
+    id: 'ProductFacet',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'Product',
+    position: 10
+  }]
+
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  @UI.selectionField: [{ position: 10 }]
+  ProductId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  ProductName;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  ProductDescription;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  Category;
+}

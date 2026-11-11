@@ -1,0 +1,45 @@
+@Metadata.layer: #CUSTOMER
+
+@UI.headerInfo: {
+  typeName: 'Stock',
+  typeNamePlural: 'Stock',
+  title: { type: #STANDARD, value: 'ProductName' },
+  description: { type: #STANDARD, value: 'WarehouseName' }
+}
+
+annotate view ZC_SPAC109_STOCK with
+{
+  @UI.facet: [{
+    id: 'StockFacet',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'Stock',
+    position: 10
+  }]
+
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  @UI.selectionField: [{ position: 10 }]
+  WarehouseName;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  @UI.selectionField: [{ position: 20 }]
+  WarehouseCity;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  ProductName;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  Amount;
+
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification: [{ position: 50 }]
+  ProductDescription;
+
+  @UI.lineItem: [{ position: 60 }]
+  @UI.identification: [{ position: 60 }]
+  ProductCategory;
+}

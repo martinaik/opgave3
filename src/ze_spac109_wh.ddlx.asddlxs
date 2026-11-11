@@ -1,0 +1,38 @@
+@Metadata.layer: #CUSTOMER
+@UI.headerInfo: {
+  typeName: 'Warehouse',
+  typeNamePlural: 'Warehouses',
+  title: { type: #STANDARD, value: 'WarehouseName' }
+}
+
+annotate view ZC_SPAC109_WH with
+{
+  @UI.facet: [{
+    id: 'WarehouseFacet',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'Warehouse',
+    position: 10
+  }]
+
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification: [{ position: 10 }]
+  @UI.selectionField: [{ position: 10 }]
+  WarehouseId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification: [{ position: 20 }]
+  WarehouseName;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification: [{ position: 30 }]
+  Address;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification: [{ position: 40 }]
+  City;
+  
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification: [{ position: 50 }]
+  PostalCode;
+}
