@@ -26,6 +26,7 @@ Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og la
 
 ## Datavalidering
 For at sikre korrekte data er der implementeret flere valideringer:
+
 **Validering for produkter**
 - Produktnavn skal være unikt - der kan ikke oprettes produkter med samme navn.
 - Produktnavn, produktbeskrivelse og kategori må ikke være tomme.
