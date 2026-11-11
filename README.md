@@ -22,7 +22,7 @@ Brugeren kan oprette, se, redigere og slette produkter. For hvert produkt gemmes
 
 **Lagerbeholdning**: Brugeren kan registrere, hvor mange enheder af et bestemt produkt der findes på et bestemt lager. 
 
-Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og lagre
+Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og lagre.
 
 ## Datavalidering
 For at sikre korrekte data er der implementeret flere valideringer:
