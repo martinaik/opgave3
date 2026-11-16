@@ -26,7 +26,7 @@ Brugeren kan oprette, se, redigere og slette produkter. For hvert produkt gemmes
 
 Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og lagre. 
 Status for et produkt vises med grønt flueben (ACTIVE) og rødt ikon (INACTIVE). 
-Lagerbeholdning vises med rødt ikon, når den er under produktets minimum, og grøn flueben ellers. Lagerbeholdninger under minimum kan genopfyldes med ét klik via knappen “Restock to minimum”, som sætter beholdningen op til dobbelt minimum. Knappen afviser produkter, der er udgået, eller hvor beholdningen allerede er i orden.
+Lagerbeholdning vises med rødt ikon, når den er under produktets minimum, og grøn flueben ellers. Lagerbeholdninger under minimum kan genopfyldes med ét klik via knappen “Restock to minimum”, som sætter beholdningen op til dobbelt minimum. Knappen er kun aktiv, når beholdningen er under produktets minimum, og produktet ikke er udgået. 
 
 ## Datavalidering
 For at sikre korrekte data er der implementeret flere valideringer:
