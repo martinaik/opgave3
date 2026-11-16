@@ -13,8 +13,8 @@ authorization master ( instance )
   update;
   delete ( precheck );
 
-  field ( readonly ) ProductId;
-  field ( mandatory ) ProductName, ProductDescription, Category;
+  field ( readonly ) ProductId, StatusCriticality;
+  field ( mandatory ) ProductName, ProductDescription, Category, ProductStatus;
 
   draft action Edit;
   draft action Activate optimized;
@@ -22,13 +22,17 @@ authorization master ( instance )
   draft action Resume;
 
   validation validateUniqueName on save { create; update; field ProductName; }
-  validation validateMandatory on save { create; update; field ProductName, ProductDescription, Category; }
+  validation validateMandatory on save { create; update; field ProductName, ProductDescription, Category, ProductStatus; }
+  validation validatePrice on save { create; update; field Price, CurrencyCode; }
 
   draft determine action Prepare
   {
     validation validateUniqueName;
     validation validateMandatory;
+    validation validatePrice;
   }
+
+  determination setDefaults on modify { create; }
 
   mapping for zspac109_product
   {
@@ -36,6 +40,10 @@ authorization master ( instance )
     ProductName        = product_name;
     ProductDescription = product_description;
     Category           = category;
+    ProductStatus      = product_status;
+    MinStock           = min_stock;
+    CurrencyCode       = currency_code;
+    Price              = price;
     LastChangedAt      = last_changed_at;
   }
 }

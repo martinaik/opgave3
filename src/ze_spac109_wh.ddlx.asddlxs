@@ -7,32 +7,41 @@
 
 annotate view ZC_SPAC109_WH with
 {
-  @UI.facet: [{
-    id: 'WarehouseFacet',
-    purpose: #STANDARD,
-    type: #IDENTIFICATION_REFERENCE,
-    label: 'Warehouse',
-    position: 10
-  }]
+   @UI.facet: [
+    {
+      id: 'WarehouseFacet',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Warehouse',
+      position: 10
+    },
+    {
+      id: 'WarehouseQuickView',
+      purpose: #QUICK_VIEW,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Warehouse',
+      position: 100
+    }
+  ]
 
-  @UI.lineItem: [{ position: 10 }]
+  @UI.lineItem: [{ position: 10, cssDefault.width: '10em' }]
   @UI.identification: [{ position: 10 }]
   @UI.selectionField: [{ position: 10 }]
   WarehouseId;
 
-  @UI.lineItem: [{ position: 20 }]
+  @UI.lineItem: [{ position: 20, cssDefault.width: '15em' }]
   @UI.identification: [{ position: 20 }]
   WarehouseName;
 
-  @UI.lineItem: [{ position: 30 }]
+  @UI.lineItem: [{ position: 30, cssDefault.width: '15em' }]
   @UI.identification: [{ position: 30 }]
   Address;
 
-  @UI.lineItem: [{ position: 40 }]
+  @UI.lineItem: [{ position: 40, cssDefault.width: '10em' }]
   @UI.identification: [{ position: 40 }]
   City;
   
-  @UI.lineItem: [{ position: 50 }]
+  @UI.lineItem: [{ position: 50, cssDefault.width: '10em' }]
   @UI.identification: [{ position: 50 }]
   PostalCode;
 }

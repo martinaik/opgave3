@@ -12,9 +12,11 @@ authorization master ( instance )
   update;
   delete;
 
+  action ( features : instance ) restockToMinimum result [1] $self;
+
   field ( readonly : update ) WarehouseId, ProductId;
-  field ( readonly ) ProductName, ProductDescription, ProductCategory,
-  WarehouseName, WarehouseAddress, WarehouseCity, PostalCode;
+  field ( readonly ) ProductName, WarehouseName, WarehouseAddress, WarehouseCity, PostalCode,
+  MinStock, AmountCriticality, StockValue, CurrencyCode;
   field ( mandatory ) Amount;
 
   draft action Edit;
@@ -26,6 +28,7 @@ authorization master ( instance )
   validation validateNonNegativeAmount on save { create; field Amount; }
   validation validateProduct   on save { create; update; field ProductId; }
   validation validateWarehouse on save { create; update; field WarehouseId; }
+  validation warnLowStock on save { create; update; field Amount; }
 
   draft determine action Prepare
   {
@@ -33,6 +36,7 @@ authorization master ( instance )
     validation validateNonNegativeAmount;
     validation validateProduct;
     validation validateWarehouse;
+    validation warnLowStock;
   }
 
   mapping for zspac109_stock

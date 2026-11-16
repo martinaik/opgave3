@@ -19,7 +19,9 @@ CLASS zcl_spac109_data_loader DEFINITION
 ENDCLASS.
 
 
-CLASS zcl_spac109_data_loader IMPLEMENTATION.
+
+CLASS ZCL_SPAC109_DATA_LOADER IMPLEMENTATION.
+
 
   METHOD if_oo_adt_classrun~main.
 
@@ -65,6 +67,7 @@ CLASS zcl_spac109_data_loader IMPLEMENTATION.
 
   ENDMETHOD.
 
+
   METHOD cleanup.
 
     DELETE FROM zspac109_stock.
@@ -79,4 +82,3 @@ CLASS zcl_spac109_data_loader IMPLEMENTATION.
 
   ENDMETHOD.
 ENDCLASS.
-

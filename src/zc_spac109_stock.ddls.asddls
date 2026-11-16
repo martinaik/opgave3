@@ -11,6 +11,7 @@ define root view entity ZC_SPAC109_STOCK provider contract transactional_query a
       element: 'WarehouseId'
     }
   }]  
+  @ObjectModel.foreignKey.association: '_Warehouse_stock'
   key WarehouseId,
   
   @EndUserText.label: 'Product'
@@ -20,6 +21,7 @@ define root view entity ZC_SPAC109_STOCK provider contract transactional_query a
       element: 'ProductId'
     }
   }]
+  @ObjectModel.foreignKey.association: '_Product_stock'
   key ProductId,
   
   @EndUserText.label: 'Amount'
@@ -27,12 +29,6 @@ define root view entity ZC_SPAC109_STOCK provider contract transactional_query a
   
   @EndUserText.label: 'Product Name'
   ProductName,
-  
-  @EndUserText.label: 'Product Description'
-  ProductDescription,
-  
-  @EndUserText.label: 'Product Category'
-  ProductCategory,
   
   @EndUserText.label: 'Warehouse Name'
   WarehouseName,
@@ -46,6 +42,19 @@ define root view entity ZC_SPAC109_STOCK provider contract transactional_query a
   @EndUserText.label: 'Postal Code'
   PostalCode,
   
+  MinStock,
+  AmountCriticality,
+  
+  @EndUserText.label: 'Currency'
+  CurrencyCode,
+
+  @EndUserText.label: 'Stock value'
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  StockValue,
+  
   _Product,
-  _Warehouse
+  _Warehouse,
+  
+  _Product_stock   : redirected to ZC_SPAC109_PRODUCT,
+  _Warehouse_stock : redirected to ZC_SPAC109_WH
 }

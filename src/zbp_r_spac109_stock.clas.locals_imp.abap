@@ -21,6 +21,15 @@ CLASS lhc_ZR_SPAC109_STOCK DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS validateWarehouse FOR VALIDATE ON SAVE
       IMPORTING keys FOR Stock~validateWarehouse.
 
+    METHODS warnLowStock FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Stock~warnLowStock.
+
+    METHODS restockToMinimum FOR MODIFY
+      IMPORTING keys FOR ACTION Stock~restockToMinimum RESULT result.
+
+    METHODS get_instance_features FOR INSTANCE FEATURES
+       IMPORTING keys REQUEST requested_features FOR Stock RESULT result.
+
 ENDCLASS.
 
 CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
@@ -113,10 +122,10 @@ CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
 
       CHECK stock-ProductId IS NOT INITIAL.
 
-      SELECT SINGLE product_id
+      SELECT SINGLE product_id, product_status
         FROM zspac109_product
         WHERE product_id = @stock-ProductId
-        INTO @DATA(lv_product_id).
+        INTO @DATA(ls_product).
 
       IF sy-subrc <> 0.
         APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
@@ -124,7 +133,16 @@ CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
                         %state_area = 'VALIDATE_PRODUCT'
                         %msg        = new_message_with_text(
                                         severity = if_abap_behv_message=>severity-error
-                                        text     = |The product { stock-ProductId } does not exist.| )
+                                        text     = |Product { stock-ProductId } does not exist.| )
+                        %element-ProductId = if_abap_behv=>mk-on ) TO reported-stock.
+
+      ELSEIF to_upper( condense( ls_product-product_status ) ) = 'INACTIVE'.
+        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
+        APPEND VALUE #( %tky        = stock-%tky
+                        %state_area = 'VALIDATE_PRODUCT'
+                        %msg        = new_message_with_text(
+                                        severity = if_abap_behv_message=>severity-error
+                                        text     = |Product { stock-ProductId } is discontinued and cannot get new stock rows.| )
                         %element-ProductId = if_abap_behv=>mk-on ) TO reported-stock.
       ENDIF.
     ENDLOOP.
@@ -158,6 +176,133 @@ CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
                                         text     = |The warehouse { stock-WarehouseId } does not exist.| )
                         %element-WarehouseId = if_abap_behv=>mk-on ) TO reported-stock.
       ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD warnLowStock.
+    READ ENTITIES OF zr_spac109_stock IN LOCAL MODE
+      ENTITY Stock
+        FIELDS ( ProductId Amount )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(stocks).
+
+    LOOP AT stocks INTO DATA(stock).
+
+      APPEND VALUE #( %tky        = stock-%tky
+                      %state_area = 'WARN_LOW_STOCK' ) TO reported-stock.
+
+      SELECT SINGLE min_stock, product_name
+        FROM zspac109_product
+        WHERE product_id = @stock-ProductId
+        INTO @DATA(ls_product).
+
+      CHECK sy-subrc = 0.
+      CHECK ls_product-min_stock > 0.
+
+      IF stock-Amount < ls_product-min_stock.
+        APPEND VALUE #( %tky        = stock-%tky
+                        %state_area = 'WARN_LOW_STOCK'
+                        %msg        = new_message_with_text(
+                                        severity = if_abap_behv_message=>severity-warning
+                                        text     = |Low stock: { ls_product-product_name } has { stock-Amount } left, minimum is { ls_product-min_stock }.| )
+                        %element-Amount = if_abap_behv=>mk-on ) TO reported-stock.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD restockToMinimum.
+    READ ENTITIES OF zr_spac109_stock IN LOCAL MODE
+      ENTITY Stock
+        FIELDS ( ProductId Amount )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(stocks).
+
+    LOOP AT stocks INTO DATA(stock).
+
+      SELECT SINGLE min_stock, product_status
+        FROM zspac109_product
+        WHERE product_id = @stock-ProductId
+        INTO @DATA(ls_product).
+
+      DATA(lv_found) = xsdbool( sy-subrc = 0 ).
+
+      IF lv_found = abap_true
+         AND to_upper( condense( ls_product-product_status ) ) = 'INACTIVE'.
+        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
+        APPEND VALUE #( %tky = stock-%tky
+                        %msg = new_message_with_text(
+                                 severity = if_abap_behv_message=>severity-error
+                                 text     = 'The product is discontinued and cannot be refilled.' ) ) TO reported-stock.
+        CONTINUE.
+      ENDIF.
+
+      DATA(lv_min) = ls_product-min_stock.
+
+      IF lv_found = abap_false OR lv_min <= 0.
+        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
+        APPEND VALUE #( %tky = stock-%tky
+                        %msg = new_message_with_text(
+                                 severity = if_abap_behv_message=>severity-error
+                                 text     = 'The product has no minimum stock.' ) ) TO reported-stock.
+        CONTINUE.
+      ENDIF.
+
+      IF stock-Amount >= lv_min.
+        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
+        APPEND VALUE #( %tky = stock-%tky
+                        %msg = new_message_with_text(
+                                 severity = if_abap_behv_message=>severity-error
+                                 text     = |The stock amount ({ stock-Amount }) is not under the minimum ({ lv_min }).| ) ) TO reported-stock.
+        CONTINUE.
+      ENDIF.
+
+      DATA(lv_target) = lv_min * 2.
+
+      MODIFY ENTITIES OF zr_spac109_stock IN LOCAL MODE
+        ENTITY Stock
+          UPDATE FIELDS ( Amount )
+          WITH VALUE #( ( %tky = stock-%tky Amount = lv_target ) ).
+
+      APPEND VALUE #( %tky = stock-%tky
+                      %msg = new_message_with_text(
+                               severity = if_abap_behv_message=>severity-success
+                               text     = |Stock replenished to { lv_target }.| ) ) TO reported-stock.
+    ENDLOOP.
+
+    READ ENTITIES OF zr_spac109_stock IN LOCAL MODE
+      ENTITY Stock ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated).
+    result = VALUE #( FOR s IN updated ( %tky = s-%tky %param = s ) ).
+  ENDMETHOD.
+
+  METHOD get_instance_features.
+    READ ENTITIES OF zr_spac109_stock IN LOCAL MODE
+      ENTITY Stock
+        FIELDS ( ProductId Amount )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(stocks).
+
+    LOOP AT stocks INTO DATA(stock).
+
+      SELECT SINGLE min_stock, product_status
+        FROM zspac109_product
+        WHERE product_id = @stock-ProductId
+        INTO @DATA(ls_product).
+
+      DATA(lv_found) = xsdbool( sy-subrc = 0 ).
+
+      DATA(lv_enabled) = xsdbool(
+           lv_found = abap_true
+       AND ls_product-min_stock > 0
+       AND stock-Amount < ls_product-min_stock
+       AND to_upper( condense( ls_product-product_status ) ) <> 'INACTIVE' ).
+
+      APPEND VALUE #(
+        %tky = stock-%tky
+        %action-restockToMinimum = COND #( WHEN lv_enabled = abap_true
+                                           THEN if_abap_behv=>fc-o-enabled
+                                           ELSE if_abap_behv=>fc-o-disabled )
+      ) TO result.
     ENDLOOP.
   ENDMETHOD.
 

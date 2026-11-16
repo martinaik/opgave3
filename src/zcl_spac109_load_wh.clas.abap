@@ -9,7 +9,9 @@ CLASS zcl_spac109_load_wh DEFINITION
 ENDCLASS.
 
 
-CLASS zcl_spac109_load_wh IMPLEMENTATION.
+
+CLASS ZCL_SPAC109_LOAD_WH IMPLEMENTATION.
+
 
   METHOD if_oo_adt_classrun~main.
 
@@ -45,5 +47,4 @@ CLASS zcl_spac109_load_wh IMPLEMENTATION.
     out->write( |Processed { sy-dbcnt } warehouses.| ).
 
   ENDMETHOD.
-
 ENDCLASS.

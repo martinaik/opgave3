@@ -19,6 +19,12 @@ CLASS lhc_Product DEFINITION INHERITING FROM cl_abap_behavior_handler.
     METHODS precheck_delete FOR PRECHECK
       IMPORTING keys FOR DELETE Product.
 
+    METHODS setDefaults FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Product~setDefaults.
+
+    METHODS validatePrice FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Product~validatePrice.
+
 ENDCLASS.
 
 CLASS lhc_Product IMPLEMENTATION.
@@ -93,7 +99,7 @@ CLASS lhc_Product IMPLEMENTATION.
   METHOD validateMandatory.
     READ ENTITIES OF zr_spac109_product IN LOCAL MODE
       ENTITY Product
-        FIELDS ( ProductName ProductDescription Category )
+        FIELDS ( ProductName ProductDescription Category ProductStatus )
         WITH CORRESPONDING #( keys )
       RESULT DATA(products).
 
@@ -105,6 +111,7 @@ CLASS lhc_Product IMPLEMENTATION.
       DATA(lv_name)     = condense( product-ProductName ).
       DATA(lv_description)     = condense( product-ProductDescription ).
       DATA(lv_category) = condense( product-Category ).
+      DATA(lv_status) = condense( product-ProductStatus ).
 
       IF lv_name IS INITIAL.
         APPEND VALUE #( %tky = product-%tky ) TO failed-product.
@@ -135,6 +142,17 @@ CLASS lhc_Product IMPLEMENTATION.
                                         text     = 'Category is required.' )
                         %element-Category = if_abap_behv=>mk-on ) TO reported-product.
       ENDIF.
+
+      IF lv_status IS INITIAL.
+        APPEND VALUE #( %tky = product-%tky ) TO failed-product.
+        APPEND VALUE #( %tky        = product-%tky
+                        %state_area = 'VALIDATE_MANDATORY'
+                        %msg        = new_message_with_text(
+                                        severity = if_abap_behv_message=>severity-error
+                                        text     = 'Product status is required.' )
+                        %element-ProductStatus = if_abap_behv=>mk-on ) TO reported-product.
+      ENDIF.
+
     ENDLOOP.
   ENDMETHOD.
 
@@ -155,5 +173,59 @@ CLASS lhc_Product IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
+
+  METHOD setDefaults.
+    READ ENTITIES OF zr_spac109_product IN LOCAL MODE
+      ENTITY Product
+        FIELDS ( ProductStatus MinStock )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(products).
+
+    MODIFY ENTITIES OF zr_spac109_product IN LOCAL MODE
+      ENTITY Product
+        UPDATE FIELDS ( ProductStatus MinStock )
+        WITH VALUE #( FOR p IN products
+                      ( %tky          = p-%tky
+                        ProductStatus = COND #( WHEN p-ProductStatus IS INITIAL
+                                                THEN 'ACTIVE'
+                                                ELSE p-ProductStatus )
+                        MinStock      = COND #( WHEN p-MinStock IS INITIAL
+                                                THEN 10
+                                                ELSE p-MinStock ) ) ).
+  ENDMETHOD.
+
+  METHOD validatePrice.
+    READ ENTITIES OF zr_spac109_product IN LOCAL MODE
+      ENTITY Product
+        FIELDS ( Price CurrencyCode )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(products).
+
+    LOOP AT products INTO DATA(product).
+
+      APPEND VALUE #( %tky        = product-%tky
+                      %state_area = 'VALIDATE_PRICE' ) TO reported-product.
+
+      IF product-Price < 0.
+        APPEND VALUE #( %tky = product-%tky ) TO failed-product.
+        APPEND VALUE #( %tky        = product-%tky
+                        %state_area = 'VALIDATE_PRICE'
+                        %msg        = new_message_with_text(
+                                        severity = if_abap_behv_message=>severity-error
+                                        text     = 'The price must be positive.' )
+                        %element-Price = if_abap_behv=>mk-on ) TO reported-product.
+      ENDIF.
+
+      IF product-Price > 0 AND product-CurrencyCode IS INITIAL.
+        APPEND VALUE #( %tky = product-%tky ) TO failed-product.
+        APPEND VALUE #( %tky        = product-%tky
+                        %state_area = 'VALIDATE_PRICE'
+                        %msg        = new_message_with_text(
+                                        severity = if_abap_behv_message=>severity-error
+                                        text     = 'Specify a currency (e.g. DKK).' )
+                        %element-CurrencyCode = if_abap_behv=>mk-on ) TO reported-product.
+      ENDIF.
+    ENDLOOP.
+ENDMETHOD.
 
 ENDCLASS.

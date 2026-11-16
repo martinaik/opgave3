@@ -13,4 +13,6 @@ define behavior for ZC_SPAC109_STOCK alias Stock
   use action Discard;
   use action Resume;
   use action Prepare;
+
+  use action restockToMinimum;
 }

@@ -14,32 +14,38 @@ annotate view ZC_SPAC109_STOCK with
     purpose: #STANDARD,
     type: #IDENTIFICATION_REFERENCE,
     label: 'Stock',
-    position: 10
+    position: 5
   }]
-
-  @UI.lineItem: [{ position: 10 }]
+  
+  @UI.lineItem: [{ position: 10, cssDefault.width: '8em' }]
   @UI.identification: [{ position: 10 }]
   @UI.selectionField: [{ position: 10 }]
+  WarehouseId;
+
+  @UI.lineItem: [{ position: 20, cssDefault.width: '13em' }]
+  @UI.identification: [{ position: 20 }]
   WarehouseName;
 
-  @UI.lineItem: [{ position: 20 }]
-  @UI.identification: [{ position: 20 }]
-  @UI.selectionField: [{ position: 20 }]
+  @UI.lineItem: [{ position: 30, cssDefault.width: '10em' }]
+  @UI.identification: [{ position: 30 }]
+  @UI.selectionField: [{ position: 30 }]
   WarehouseCity;
 
-  @UI.lineItem: [{ position: 30 }]
-  @UI.identification: [{ position: 30 }]
+  @UI.lineItem: [
+  { position: 40, cssDefault.width: '5em' },
+  { type: #FOR_ACTION, dataAction: 'restockToMinimum', label: 'Restock to minimum' } ]
+  @UI.identification: [{ position: 40 }]
+  ProductId;
+
+  @UI.lineItem: [{ position: 50, cssDefault.width: '10em' }]
+  @UI.identification: [{ position: 50 }]
   ProductName;
 
-  @UI.lineItem: [{ position: 40 }]
-  @UI.identification: [{ position: 40 }]
-  Amount;
-
-  @UI.lineItem: [{ position: 50 }]
-  @UI.identification: [{ position: 50 }]
-  ProductDescription;
-
-  @UI.lineItem: [{ position: 60 }]
+  @UI.lineItem: [{ position: 60, cssDefault.width: '8em', criticality: 'AmountCriticality' }]
   @UI.identification: [{ position: 60 }]
-  ProductCategory;
+  Amount;
+  
+  @UI.lineItem:       [{ position: 70, cssDefault.width: '13em' }]
+  @UI.identification: [{ position: 70 }]
+  StockValue;
 }
