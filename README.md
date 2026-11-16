@@ -14,6 +14,7 @@ Brugeren kan oprette, se, redigere og slette produkter. For hvert produkt gemmes
 - Kategori
 - Minimumsbeholdning
 - Status (ACTIVE/INACTIVE)
+- Pris og valuta
 
 **Lagre**: Brugeren kan oprette, se, redigere og slette lagre. For hvert lager gemmes følgende oplysninger:
 - Lager ID
@@ -22,11 +23,20 @@ Brugeren kan oprette, se, redigere og slette produkter. For hvert produkt gemmes
 - By
 - Postnummer
 
-**Lagerbeholdning**: Brugeren kan registrere, hvor mange enheder af et bestemt produkt der findes på et bestemt lager. 
+**Lagerbeholdning**: Brugeren kan registrere, hvor mange enheder af et bestemt produkt der findes på et bestemt lager. For hver lagerbeholdning vises:
+- Lager ID
+- Lagernavn
+- By
+- Produkt ID
+- Produktnavn
+- Antal
+- Lagerværdi (pris x antal)
 
 Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og lagre. 
+Nye produkter oprettes med Status = ACTIVE og minimumsbeholdning = 10 via en determination. Brugeren kan ændre værdierne, og validationerne sikrer, at status stadig er udfyldt og gyldig. 
 Status for et produkt vises med grønt flueben (ACTIVE) og rødt ikon (INACTIVE). 
-Lagerbeholdning vises med rødt ikon, når den er under produktets minimum, og grøn flueben ellers. Lagerbeholdninger under minimum kan genopfyldes med ét klik via knappen “Restock to minimum”, som sætter beholdningen op til dobbelt minimum. Knappen er kun aktiv, når beholdningen er under produktets minimum, og produktet ikke er udgået. 
+Lagerbeholdning vises med rødt ikon, når den er under produktets minimum, og grøn flueben ellers. 
+Lagerbeholdninger under minimum kan genopfyldes med ét klik via knappen “Restock to minimum”, som sætter beholdningen op til dobbelt minimum. Knappen er kun aktiv, når beholdningen er under produktets minimum, og produktet ikke er udgået. Actionen afviser selv udgåede produkter og produkter uden minimum. 
 
 ## Datavalidering
 For at sikre korrekte data er der implementeret flere valideringer:
@@ -36,6 +46,7 @@ For at sikre korrekte data er der implementeret flere valideringer:
 - Produktnavn, produktbeskrivelse, kategori og status må ikke være tomme.
 - Kategori skal findes på listen over godkendte kategorier.
 - Status skal være ACTIVE eller INACTIVE.
+- Prisen må ikke være negativ, og et produkt med en pris skal have en valuta.
 - Produkt med lagerbeholdning kan ikke slettes.
 
 **Validering for lagre**
