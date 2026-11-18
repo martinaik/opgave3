@@ -228,31 +228,28 @@ CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
 
       IF lv_found = abap_true
          AND to_upper( condense( ls_product-product_status ) ) = 'INACTIVE'.
-        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
         APPEND VALUE #( %tky = stock-%tky
                         %msg = new_message_with_text(
-                                 severity = if_abap_behv_message=>severity-error
-                                 text     = 'The product is discontinued and cannot be refilled.' ) ) TO reported-stock.
+                                 severity = if_abap_behv_message=>severity-information
+                                 text     = |The product { stock-ProductId } is discontinued and was skipped.| ) ) TO reported-stock.
         CONTINUE.
       ENDIF.
 
       DATA(lv_min) = ls_product-min_stock.
 
       IF lv_found = abap_false OR lv_min <= 0.
-        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
         APPEND VALUE #( %tky = stock-%tky
                         %msg = new_message_with_text(
-                                 severity = if_abap_behv_message=>severity-error
-                                 text     = 'The product has no minimum stock.' ) ) TO reported-stock.
+                                 severity = if_abap_behv_message=>severity-information
+                                 text     = |The product { stock-ProductId } has no minimum stock and was skipped.| ) ) TO reported-stock.
         CONTINUE.
       ENDIF.
 
       IF stock-Amount >= lv_min.
-        APPEND VALUE #( %tky = stock-%tky ) TO failed-stock.
         APPEND VALUE #( %tky = stock-%tky
                         %msg = new_message_with_text(
-                                 severity = if_abap_behv_message=>severity-error
-                                 text     = |The stock amount ({ stock-Amount }) is not under the minimum ({ lv_min }).| ) ) TO reported-stock.
+                                 severity = if_abap_behv_message=>severity-information
+                                 text     = |The product { stock-ProductId } ({ stock-Amount }) is not under the minimum stock ({ lv_min }) and was skipped.| ) ) TO reported-stock.
         CONTINUE.
       ENDIF.
 
@@ -266,7 +263,7 @@ CLASS lhc_ZR_SPAC109_STOCK IMPLEMENTATION.
       APPEND VALUE #( %tky = stock-%tky
                       %msg = new_message_with_text(
                                severity = if_abap_behv_message=>severity-success
-                               text     = |Stock replenished to { lv_target }.| ) ) TO reported-stock.
+                               text     = |The product { stock-ProductId } has been restocked to { lv_target }.| ) ) TO reported-stock.
     ENDLOOP.
 
     READ ENTITIES OF zr_spac109_stock IN LOCAL MODE
