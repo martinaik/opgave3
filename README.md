@@ -34,7 +34,7 @@ Brugeren kan oprette, se, redigere og slette produkter. For hvert produkt gemmes
 
 Systemet tildeler automatisk unikke ID'er, når der oprettes nye produkter og lagre. Når der oprettes ny lagerbeholdning, kan brugeren søge efter et eksisterende lager og produkt ved at indtaste deres navne. Programmet viser relevante forslag, som brugeren kan vælge imellem. Når et lager eller produkt vælges, tilknyttes dets ID automatisk, så brugeren ikke selv behøver at kende eller indtaste ID'erne. 
 Nye produkter oprettes med Status = ACTIVE og minimumsbeholdning = 10 via en determination. Brugeren kan ændre værdierne, og validationerne sikrer, at status stadig er udfyldt og gyldig. 
-Status for et produkt vises med grønt flueben (ACTIVE) og rødt ikon (INACTIVE). 
+Status for et produkt vises med grønt flueben (ACTIVE) eller rødt ikon (INACTIVE). 
 Lagerbeholdning vises med rødt ikon, når den er under produktets minimum, og grøn flueben ellers. 
 Lagerbeholdninger under minimum kan genopfyldes med ét klik via knappen “Restock to minimum”, som sætter beholdningen op til dobbelt minimum. Knappen er kun aktiv, når beholdningen er under produktets minimum, og produktet ikke er udgået. Actionen afviser selv udgåede produkter og produkter uden minimum. 
 
